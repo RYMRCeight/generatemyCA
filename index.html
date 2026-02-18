@@ -149,6 +149,7 @@ function submitToSheet() {
     form.method = "POST";
     form.action = SCRIPT_URL;
     form.target = "hidden_iframe";
+    form.style.display = "none";
 
     let input = document.createElement("input");
     input.type = "hidden";
@@ -159,11 +160,13 @@ function submitToSheet() {
     document.body.appendChild(form);
 
     form.submit();
-    document.body.removeChild(form);
 
-    alert("Submitted to Google Sheet successfully!");
+    setTimeout(() => {
+        document.body.removeChild(form);
+        alert("Submitted to Google Sheet successfully!");
+    }, 1000);
 }
-
+    
 // Hidden iframe prevents page redirect
 let iframe = document.createElement("iframe");
 iframe.name = "hidden_iframe";
