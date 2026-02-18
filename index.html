@@ -145,35 +145,27 @@ function submitToSheet() {
         return;
     }
 
-    let form = document.createElement("form");
+    const popup = window.open("", "_blank");
+
+    const form = popup.document.createElement("form");
     form.method = "POST";
     form.action = SCRIPT_URL;
-    form.target = "hidden_iframe";
-    form.style.display = "none";
 
-    let input = document.createElement("input");
+    const input = popup.document.createElement("input");
     input.type = "hidden";
     input.name = "data";
     input.value = JSON.stringify(currentRecords);
 
     form.appendChild(input);
-    document.body.appendChild(form);
+    popup.document.body.appendChild(form);
 
     form.submit();
 
-    setTimeout(() => {
-        document.body.removeChild(form);
-        alert("Submitted to Google Sheet successfully!");
-    }, 1000);
+    alert("Submitted to Google Sheet successfully!");
 }
-    
-// Hidden iframe prevents page redirect
-let iframe = document.createElement("iframe");
-iframe.name = "hidden_iframe";
-iframe.style.display = "none";
-document.body.appendChild(iframe);
 
 </script>
+
 
 </body>
 </html>
