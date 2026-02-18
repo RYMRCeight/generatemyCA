@@ -2,6 +2,9 @@
 <html>
 <head>
     <title>Certificate of Appearance - Fill Up Sheet Generator</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,6 +18,7 @@
 
         h3 {
             text-align: center;
+            margin-bottom: 20px;
         }
 
         .controls {
@@ -60,22 +64,16 @@
         }
     </style>
 </head>
+
 <body>
 
 <h2>CERTIFICATE OF APPEARANCE</h2>
 <h3>FILL-UP SHEET</h3>
 
-<h3 id="totalDisplay">
-TOTAL CA GENERATED: Loading...
-</h3>
-
 <div class="controls">
-    <button id="generateBtn">Generate Random CA Numbers</button>
-    <button onclick="window.print()">Print</button>
     <button id="generateBtn">Generate CA Numbers</button>
-<button id="submitBtn">Submit to Database</button>
-<button onclick="window.print()">Print</button>
-
+    <button id="submitBtn">Submit to Database</button>
+    <button onclick="window.print()">Print</button>
 </div>
 
 <table id="dataTable">
@@ -137,7 +135,7 @@ function generateTable() {
         currentRecords.push(caNumber);
     }
 
-    alert("50 CA Numbers Generated. Click 'Submit to Database' to save.");
+    alert("50 CA Numbers Generated.");
 }
 
 function submitToSheet() {
@@ -159,18 +157,20 @@ function submitToSheet() {
 
     form.appendChild(input);
     document.body.appendChild(form);
+
     form.submit();
     document.body.removeChild(form);
 
     alert("Submitted to Google Sheet successfully!");
 }
 
-// Hidden iframe (prevents redirect)
+// Hidden iframe prevents page redirect
 let iframe = document.createElement("iframe");
 iframe.name = "hidden_iframe";
 iframe.style.display = "none";
 document.body.appendChild(iframe);
 
 </script>
+
 </body>
 </html>
