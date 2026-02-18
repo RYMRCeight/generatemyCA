@@ -130,18 +130,28 @@ function generateTable() {
         records.push(caNumber);
     }
 
-    // SEND DATA USING FORM SUBMISSION METHOD (CORS SAFE)
-    fetch(SCRIPT_URL, {
-        method: "POST",
-        headers: {
-            "Content-Type": "text/plain;charset=utf-8",
-        },
-        body: JSON.stringify(records)
-    })
-    .then(() => {
-        setTimeout(loadTotal, 1500);
-    })
-    .catch(err => console.error(err));
+    sendToSheet(records);
+}
+
+function sendToSheet(records) {
+
+    let form = document.createElement("form");
+    form.method = "POST";
+    form.action = SCRIPT_URL;
+    form.target = "hidden_iframe";
+
+    let input = document.createElement("input");
+    input.type = "hidden";
+    input.name = "data";
+    input.value = JSON.stringify(records);
+
+    form.appendChild(input);
+    document.body.appendChild(form);
+
+    form.submit();
+    document.body.removeChild(form);
+
+    setTimeout(loadTotal, 2000);
 }
 
 function loadTotal() {
@@ -152,6 +162,12 @@ function loadTotal() {
                 "TOTAL CA GENERATED: " + data.total;
         });
 }
+
+// Hidden iframe to avoid page redirect
+let iframe = document.createElement("iframe");
+iframe.name = "hidden_iframe";
+iframe.style.display = "none";
+document.body.appendChild(iframe);
 
 loadTotal();
 
