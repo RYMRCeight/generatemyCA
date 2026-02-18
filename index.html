@@ -127,37 +127,36 @@ function generateTable() {
         `;
 
         tbody.appendChild(row);
-
         records.push(caNumber);
     }
 
-    // Send to Google Sheet
+    // SEND DATA USING FORM SUBMISSION METHOD (CORS SAFE)
     fetch(SCRIPT_URL, {
         method: "POST",
-        mode: "no-cors",
+        headers: {
+            "Content-Type": "text/plain;charset=utf-8",
+        },
         body: JSON.stringify(records)
-    });
-
-    // Update total manually after small delay
-    setTimeout(updateTotal, 1500);
+    })
+    .then(() => {
+        setTimeout(loadTotal, 1500);
+    })
+    .catch(err => console.error(err));
 }
 
-function updateTotal() {
+function loadTotal() {
     fetch(SCRIPT_URL)
         .then(res => res.json())
         .then(data => {
             document.getElementById("totalDisplay").innerText =
                 "TOTAL CA GENERATED: " + data.total;
-        })
-        .catch(() => {
-            document.getElementById("totalDisplay").innerText =
-                "TOTAL CA GENERATED: Updated in Sheet";
         });
 }
 
-generateTable();
+loadTotal();
 
 </script>
+
 
 </body>
 </html>
