@@ -93,15 +93,18 @@ TOTAL CA GENERATED: Loading...
 
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzuXE-XpJDcihkm6f3BTFxkLuKUfZEy51mDALy3B5gT4eoISMcUMs3ZQ9K44Y_qaUEP9g/exec";
 
+let currentRecords = [];
+
 document.getElementById("generateBtn").addEventListener("click", generateTable);
+document.getElementById("submitBtn").addEventListener("click", submitToSheet);
 
 function generateTable() {
 
     const tbody = document.querySelector("#dataTable tbody");
     tbody.innerHTML = "";
+    currentRecords = [];
 
     let usedNumbers = new Set();
-    let records = [];
 
     for (let i = 1; i <= 50; i++) {
 
@@ -127,13 +130,18 @@ function generateTable() {
         `;
 
         tbody.appendChild(row);
-        records.push(caNumber);
+        currentRecords.push(caNumber);
     }
 
-    sendToSheet(records);
+    alert("50 CA Numbers Generated. Click 'Submit to Database' to save.");
 }
 
-function sendToSheet(records) {
+function submitToSheet() {
+
+    if (currentRecords.length === 0) {
+        alert("Generate CA numbers first.");
+        return;
+    }
 
     let form = document.createElement("form");
     form.method = "POST";
@@ -143,36 +151,22 @@ function sendToSheet(records) {
     let input = document.createElement("input");
     input.type = "hidden";
     input.name = "data";
-    input.value = JSON.stringify(records);
+    input.value = JSON.stringify(currentRecords);
 
     form.appendChild(input);
     document.body.appendChild(form);
-
     form.submit();
     document.body.removeChild(form);
 
-    setTimeout(loadTotal, 2000);
+    alert("Submitted to Google Sheet successfully!");
 }
 
-function loadTotal() {
-    fetch(SCRIPT_URL)
-        .then(res => res.json())
-        .then(data => {
-            document.getElementById("totalDisplay").innerText =
-                "TOTAL CA GENERATED: " + data.total;
-        });
-}
-
-// Hidden iframe to avoid page redirect
+// Hidden iframe (prevents redirect)
 let iframe = document.createElement("iframe");
 iframe.name = "hidden_iframe";
 iframe.style.display = "none";
 document.body.appendChild(iframe);
 
-loadTotal();
-
 </script>
-
-
 </body>
 </html>
