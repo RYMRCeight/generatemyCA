@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Certificate of Appearance - Fill Up Sheet Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        h3 {
+            text-align: center;
+        }
+
+        .controls {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        button {
+            padding: 8px 15px;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 4px;
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            border: none;
+            outline: none;
+            font-size: 12px;
+            background: transparent;
+        }
+
+        @page {
+            size: 8.5in 13in landscape;
+            margin: 0.5in;
+        }
+
+        @media print {
+            .controls {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<h2>CERTIFICATE OF APPEARANCE</h2>
+<h3>FILL-UP SHEET</h3>
+
+<h3 id="totalDisplay">
+TOTAL CA GENERATED: Loading...
+</h3>
+
+<div class="controls">
+    <button id="generateBtn">Generate Random CA Numbers</button>
+    <button onclick="window.print()">Print</button>
+</div>
+
+<table id="dataTable">
+    <thead>
+        <tr>
+            <th>Q. #</th>
+            <th>CA NO.</th>
+            <th>NAME</th>
+            <th>OFFICE</th>
+            <th>PURPOSE</th>
+            <th>DATE</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<script>
+
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzuXE-XpJDcihkm6f3BTFxkLuKUfZEy51mDALy3B5gT4eoISMcUMs3ZQ9K44Y_qaUEP9g/exec";
+
+document.getElementById("generateBtn").addEventListener("click", generateTable);
+
+function generateTable() {
+
+    const tbody = document.querySelector("#dataTable tbody");
+    tbody.innerHTML = "";
+
+    let usedNumbers = new Set();
+    let records = [];
+
+    for (let i = 1; i <= 50; i++) {
+
+        let randomNumber;
+
+        do {
+            randomNumber = Math.floor(10000 + Math.random() * 90000);
+        } while (usedNumbers.has(randomNumber));
+
+        usedNumbers.add(randomNumber);
+
+        let caNumber = "TGLN-CA-" + randomNumber;
+
+        let row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td>${i}</td>
+            <td>${caNumber}</td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+        `;
+
+        tbody.appendChild(row);
+
+        records.push(caNumber);
+    }
+
+    // Send to Google Sheet
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        body: JSON.stringify(records)
+    });
+
+    // Update total manually after small delay
+    setTimeout(updateTotal, 1500);
+}
+
+function updateTotal() {
+    fetch(SCRIPT_URL)
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("totalDisplay").innerText =
+                "TOTAL CA GENERATED: " + data.total;
+        })
+        .catch(() => {
+            document.getElementById("totalDisplay").innerText =
+                "TOTAL CA GENERATED: Updated in Sheet";
+        });
+}
+
+generateTable();
+
+</script>
+
+</body>
+</html>
