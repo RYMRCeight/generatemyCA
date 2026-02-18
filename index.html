@@ -145,27 +145,26 @@ function submitToSheet() {
         return;
     }
 
-    const popup = window.open("", "_blank");
-
-    const form = popup.document.createElement("form");
+    const form = document.createElement("form");
     form.method = "POST";
     form.action = SCRIPT_URL;
+    form.target = "_blank";   // THIS IS THE IMPORTANT FIX
 
-    const input = popup.document.createElement("input");
+    const input = document.createElement("input");
     input.type = "hidden";
     input.name = "data";
     input.value = JSON.stringify(currentRecords);
 
     form.appendChild(input);
-    popup.document.body.appendChild(form);
+    document.body.appendChild(form);
 
     form.submit();
+    document.body.removeChild(form);
 
-    alert("Submitted to Google Sheet successfully!");
+    alert("Submitted to Google Sheet!");
 }
 
 </script>
-
 
 </body>
 </html>
